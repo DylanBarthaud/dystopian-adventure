@@ -26,13 +26,15 @@ public class Movement : MonoBehaviour
     private float moveSpeed;
     private float jumpHeight;
 
-    private PushPullState playerPPState; 
+    private PlayerState playerState = PlayerState.None; 
 
     private void Start()
     {
         moveSpeed = baseMoveSpeed;
         jumpHeight = baseJumpHeight;
-        groundLayer = LayerMask.GetMask("Ground"); 
+        groundLayer = LayerMask.GetMask("Ground");
+
+        EventManager.Instance.onPlayerStateChange += OnPlayerStateChange; 
     }
 
     private void Update()
@@ -46,9 +48,7 @@ public class Movement : MonoBehaviour
         horizontalMove = Input.GetAxisRaw("Horizontal") * moveSpeed;
         #endregion
 
-        playerPPState = GameManager.Instance.GetPlayer().GetComponent<PushObjs>().GetPlayerPPState();
-
-        if(playerPPState == PushPullState.Pulling)
+        if(playerState == PlayerState.Pulling)
         {
             moveSpeed = pullingSpeed; 
         }
@@ -57,7 +57,7 @@ public class Movement : MonoBehaviour
             moveSpeed = baseMoveSpeed; 
         }
 
-        if(playerPPState != PushPullState.Pulling)
+        if(playerState != PlayerState.Pulling)
         {
             Flip();
         }
@@ -81,6 +81,11 @@ public class Movement : MonoBehaviour
     private bool isGrounded()
     {
         return Physics2D.OverlapCircle(groundCheck.position, groundCheckDistance, groundLayer);
+    }
+
+    private void OnPlayerStateChange(PlayerState playerState)
+    {
+        this.playerState = playerState;
     }
 
     // Player Gizmos for designers 

@@ -1,37 +1,43 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
-
-public enum PushPullState { None, Pulling, Pushing }
 
 public class PushObjs : MonoBehaviour
 {
-    [Header("how far away the player can push an Obj from")]
+    [Header("Stats")]
     [SerializeField] private float pushDistance;
 
+    [Header("Components")]
     [SerializeField] private Transform pushDistanceCentre;
 
-    private PushPullState playerPPState = PushPullState.None; 
+    private PlayerState playerState = PlayerState.None;
+
+    private void Start()
+    {
+        EventManager.Instance.onPlayerStateChange += OnPlayerStateChange;
+    }
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            if(playerPPState == PushPullState.None ||
-                playerPPState == PushPullState.Pushing)
+            if(playerState == PlayerState.None ||
+                playerState == PlayerState.Pushing)
             {
-                playerPPState = PushPullState.Pulling; 
+                EventManager.Instance.OnPlayerStateChange(PlayerState.Pulling);
             }
             else
             {
-                playerPPState = PushPullState.None;
+                EventManager.Instance.OnPlayerStateChange(PlayerState.None);
             }
         } //swap PushPull state
 
-        if (ObjInPushRange()){
+        if (playerState == PlayerState.Pulling){
             PushObj(); 
         }
     }
-
+        
     private void PushObj()
     {
         Collider2D[] ObjColliders = Physics2D.OverlapCircleAll(pushDistanceCentre.position, pushDistance);
@@ -41,13 +47,7 @@ public class PushObjs : MonoBehaviour
             if (collider.gameObject.CompareTag("PushableObject"))
             {
                 PushableObj pushedObj = collider.gameObject.GetComponent<PushableObj>(); 
-                if (playerPPState != PushPullState.Pulling && 
-                    playerPPState != PushPullState.Pushing)
-                {
-                    pushedObj.Pushed();
-                }
-               
-                if(playerPPState == PushPullState.Pulling && 
+                if(playerState == PlayerState.Pulling && 
                     !pushedObj.CheckPulledState())
                 {
                     pushedObj.SwitchPulledState();
@@ -56,20 +56,15 @@ public class PushObjs : MonoBehaviour
         }
     }
 
-    private bool ObjInPushRange()
+    private void OnPlayerStateChange(PlayerState playerState)
     {
-        return Physics2D.OverlapCircle(pushDistanceCentre.position, pushDistance); 
-    }
-
-    public PushPullState GetPlayerPPState()
-    {
-        return playerPPState;
+        this.playerState = playerState;
     }
 
     // Player Gizmos for designers 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.green;
+        Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(pushDistanceCentre.position, pushDistance);
     }
 }

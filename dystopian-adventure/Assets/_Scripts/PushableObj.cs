@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,18 +6,11 @@ using UnityEngine;
 public class PushableObj : MonoBehaviour
 {
     private bool beingPulled = false;
+    PlayerState playerState;
 
-    private void Update()
+    private void Start()
     {
-        PushPullState playerPPState = GameManager.Instance.GetPlayer().GetComponent<PushObjs>().GetPlayerPPState(); 
-        if (playerPPState == PushPullState.None ||
-            playerPPState == PushPullState.Pushing)
-        {
-            if (beingPulled)
-            {
-                SwitchPulledState(); 
-            }
-        }
+        EventManager.Instance.onPlayerStateChange += OnPlayerStateChange; 
     }
 
     private void FixedUpdate()
@@ -41,7 +35,17 @@ public class PushableObj : MonoBehaviour
             newPos = new Vector3(playerPos.x + 1.3f, transform.position.y);
         }
 
+
+
         transform.position = newPos;
+    }
+
+    private void OnPlayerStateChange(PlayerState playerState)
+    {
+        if(playerState == PlayerState.None && beingPulled)
+        {
+            SwitchPulledState();
+        }
     }
 
     public void SwitchPulledState()
