@@ -35,9 +35,23 @@ public class PushableObj : MonoBehaviour
             newPos = new Vector3(playerPos.x + 1.3f, transform.position.y);
         }
 
+        Vector2 boxSize = GetComponent<Collider2D>().bounds.size;
+        Collider2D[] hits = Physics2D.OverlapBoxAll(newPos, boxSize, 0f, LayerMask.GetMask("Ground"));
 
+        bool isBlocked = false;
+        foreach (var hit in hits)
+        {
+            if (hit != GetComponent<Collider2D>())
+            {
+                isBlocked = true;
+                break;
+            }
+        }
 
-        transform.position = newPos;
+        if (!isBlocked)
+        {
+            transform.position = newPos;
+        }
     }
 
     private void OnPlayerStateChange(PlayerState playerState)
