@@ -11,7 +11,7 @@ public class Movement : MonoBehaviour
 
     [SerializeField] private float pullingSpeed; 
 
-    [SerializeField] private float groundCheckDistance;
+    [SerializeField] private Vector2 groundCheckDistance;
     #endregion
 
     [Header("Components")]
@@ -80,7 +80,7 @@ public class Movement : MonoBehaviour
     }
     private bool isGrounded()
     {
-        return Physics2D.OverlapCircle(groundCheck.position, groundCheckDistance, groundLayer);
+        return Physics2D.OverlapBox(groundCheck.position, groundCheckDistance, groundLayer);
     }
 
     private void OnPlayerStateChange(PlayerState playerState)
@@ -92,6 +92,6 @@ public class Movement : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(groundCheck.position, groundCheckDistance);
+        Gizmos.DrawWireCube(groundCheck.position, groundCheckDistance);
     }
 }

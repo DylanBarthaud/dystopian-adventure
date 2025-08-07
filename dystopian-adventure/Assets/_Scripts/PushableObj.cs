@@ -24,15 +24,15 @@ public class PushableObj : MonoBehaviour
     public void Pushed()
     {
         Vector2 playerPos = GameManager.Instance.GetPlayer().transform.position;
-        Vector2 newPos;
+        Vector3 newPos;
 
         if(playerPos.x > transform.position.x)
         {
-            newPos = new Vector3(playerPos.x - 1.3f, transform.position.y);
+            newPos = new Vector3(playerPos.x - 1.3f, transform.position.y, transform.position.z);
         }
         else
         {
-            newPos = new Vector3(playerPos.x + 1.3f, transform.position.y);
+            newPos = new Vector3(playerPos.x + 1.3f, transform.position.y, transform.position.z);
         }
 
         Vector2 boxSize = GetComponent<Collider2D>().bounds.size;

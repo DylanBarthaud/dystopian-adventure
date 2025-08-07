@@ -8,9 +8,10 @@ public class Door : MonoBehaviour, Interactable
 
     public void Interact(Interactor interactor)
     {
-        Item_Key keyItem = interactor.gameObject.GetComponent<Item_Holder>().getItem().gameObject.GetComponent<Item_Key>();
-        if (keyItem != null
-            && keyItem.GetId() == id) 
+        var item = (Item_Key)interactor.gameObject.GetComponent<Item_Holder>().getItem(); 
+
+        if (item != null
+            && item.GetId() == id) 
         {
             Destroy(gameObject);
         }
