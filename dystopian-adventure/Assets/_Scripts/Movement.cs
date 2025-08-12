@@ -80,7 +80,7 @@ public class Movement : MonoBehaviour
     }
     private bool isGrounded()
     {
-        return Physics2D.OverlapBox(groundCheck.position, groundCheckDistance, groundLayer);
+        return Physics2D.OverlapBox(groundCheck.position, groundCheckDistance, 0.0f, groundLayer);
     }
 
     private void OnPlayerStateChange(PlayerState playerState)
