@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Item_Holder : MonoBehaviour
 {
-    public Item item;
+    private Item item;
 
     private void Update()
     {

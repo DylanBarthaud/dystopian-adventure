@@ -18,7 +18,7 @@ public class Movement : MonoBehaviour
     [SerializeField] private Transform groundCheck;
     [SerializeField] private Rigidbody2D rb2d;
 
-    private LayerMask groundLayer;
+    [SerializeField] private LayerMask groundLayer;
 
     private float horizontalMove = 0f;
     private bool isFacingRight = true;
@@ -32,7 +32,6 @@ public class Movement : MonoBehaviour
     {
         moveSpeed = baseMoveSpeed;
         jumpHeight = baseJumpHeight;
-        groundLayer = LayerMask.GetMask("Ground");
 
         EventManager.Instance.onPlayerStateChange += OnPlayerStateChange; 
     }

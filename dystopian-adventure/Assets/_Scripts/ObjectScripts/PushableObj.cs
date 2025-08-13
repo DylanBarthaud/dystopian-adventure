@@ -23,19 +23,26 @@ public class PushableObj : MonoBehaviour
 
     public void Pushed()
     {
-        Vector2 playerPos = GameManager.Instance.GetPlayer().transform.position;
-        Vector3 newPos;
+        Collider2D playerCollider = GameManager.Instance.GetPlayer().gameObject.GetComponent<Collider2D>();
+        Vector3 newParentPos;
 
-        if(playerPos.x > transform.position.x)
+        Physics2D.SyncTransforms();
+        Vector2 playerSize = playerCollider.bounds.size;
+        Vector2 boxSize = GetComponent<Collider2D>().bounds.size;
+
+        Vector3 parentPos =  transform.parent.position;
+
+        if (playerCollider.transform.position.x > transform.position.x)
         {
-            newPos = new Vector3(playerPos.x - 1.3f, transform.position.y, transform.position.z);
+            newParentPos = new Vector3(playerCollider.transform.position.x - ((playerSize.x / 2f) + (boxSize.x / 2f) + 0.1f), parentPos.y, parentPos.z);
         }
         else
         {
-            newPos = new Vector3(playerPos.x + 1.3f, transform.position.y, transform.position.z);
+            newParentPos = new Vector3(playerCollider.transform.position.x + ((playerSize.x / 2f) + (boxSize.x / 2f) + 0.1f), parentPos.y, parentPos.z);
         }
 
-        Vector2 boxSize = GetComponent<Collider2D>().bounds.size;
+        Vector3 newPos = new Vector3(playerCollider.transform.position.x + ((playerSize.x / 2f) + (boxSize.x / 2f) + 0.1f), transform.position.y, transform.position.z);
+
         Collider2D[] hits = Physics2D.OverlapBoxAll(newPos, boxSize, 0f, LayerMask.GetMask("Ground"));
 
         bool isBlocked = false;
@@ -50,7 +57,7 @@ public class PushableObj : MonoBehaviour
 
         if (!isBlocked)
         {
-            transform.position = newPos;
+            transform.parent.position = newParentPos;
         }
     }
 
