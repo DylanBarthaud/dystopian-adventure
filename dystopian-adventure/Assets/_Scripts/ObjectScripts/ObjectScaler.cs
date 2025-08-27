@@ -5,13 +5,14 @@ using UnityEngine;
 public class ObjectScaler : MonoBehaviour
 {
     private Vector3 baseSize; 
-    [SerializeField] private Vector3 scaledSize;
+    [SerializeField] private Vector3 scaleSize;
 
     private void Start()
     {
         baseSize = transform.localScale;
     }
 
+    #region Setters
     public void SetToBaseSize()
     {
         transform.localScale = baseSize; 
@@ -19,8 +20,27 @@ public class ObjectScaler : MonoBehaviour
 
     public void SetToScaledSize()
     {
-        transform.localScale = scaledSize;
+        transform.localScale = scaleSize;
     }
+
+    #endregion
+    #region Getters
+    public Vector3 GetSize()
+    {
+        return transform.localScale;
+    }
+
+    public Vector3 GetBaseSize()
+    {
+        return baseSize;
+    }
+
+    public Vector3 GetScaledSize()
+    {
+        return scaleSize;
+    }
+
+    #endregion
 
     /// <summary>
     /// Sets object to given size if size given is within valid parameters
@@ -30,7 +50,7 @@ public class ObjectScaler : MonoBehaviour
     public bool SetToSize(Vector3 size)
     {
         if(size.x > baseSize.x &&  size.y > baseSize.y && size.z > baseSize.z &&
-           size.x < scaledSize.x && size.y < scaledSize.y && size.z < scaledSize.z)
+           size.x < scaleSize.x && size.y < scaleSize.y && size.z < scaleSize.z)
         {
             transform.localScale = size; 
             return true;
