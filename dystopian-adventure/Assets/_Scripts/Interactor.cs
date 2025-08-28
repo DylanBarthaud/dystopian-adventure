@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Mathematics;
 
 public class Interactor : MonoBehaviour
 {
     [SerializeField] private float interactRange;
+    [SerializeField] private GameObject interactPrompt;
+    private GameObject displayedPrompt;
     private LayerMask interactLayer;
 
     private void Start()
@@ -14,10 +17,31 @@ public class Interactor : MonoBehaviour
 
     private void Update()
     {
-        if (CheckForInteractable() && Input.GetKeyDown(KeyCode.E))
+        if (CheckForInteractable())
         {
+            // Display interaction prompt when player is inside of the interaction range
             Collider2D interactableCollider = Physics2D.OverlapCircle(gameObject.transform.position, interactRange, interactLayer);
-            interactableCollider.gameObject.GetComponent<Interactable>().Interact(this);
+
+            if (displayedPrompt == null)
+            {
+                displayedPrompt = Instantiate(interactPrompt, interactableCollider.transform.position, quaternion.identity);
+                displayedPrompt.transform.parent = transform;
+                displayedPrompt.name = "InteractPrompt";
+            }
+
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                interactableCollider.gameObject.GetComponent<Interactable>().Interact(this);
+            }
+        }
+        else
+        {
+            // Hide interaction prompt when player is outside of the interaction range
+            if (displayedPrompt != null)
+            {
+                Destroy(displayedPrompt.gameObject);
+                displayedPrompt = null;
+            }
         }
     }
 
