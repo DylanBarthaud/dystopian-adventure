@@ -51,6 +51,12 @@ public class ChangeObjSizeStrip : MonoBehaviour
 
             if (currentObj.transform.position.x < startPos.x)
             {
+                if (invert)
+                {
+                    objScaler.SetToSize(objScaledSize);
+                    return;
+                }
+
                 objScaler.SetToBaseSize();
                 currentObj = null; 
                 return;
@@ -58,6 +64,12 @@ public class ChangeObjSizeStrip : MonoBehaviour
 
             if (currentObj.transform.position.x > endPos.x)
             {
+                if (invert)
+                {
+                    objScaler.SetToBaseSize();
+                    return;
+                }
+
                 objScaler.SetToSize(objScaledSize);
                 currentObj = null;
                 return; 
