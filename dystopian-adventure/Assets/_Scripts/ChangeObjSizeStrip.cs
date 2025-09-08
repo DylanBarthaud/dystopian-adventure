@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+public enum CurrentObjStripStatus { none, pastEnd, pastStart, inStrip }
+
 public class ChangeObjSizeStrip : MonoBehaviour
 {
     [SerializeField] private Vector3 startPos, endPos;
@@ -10,7 +12,7 @@ public class ChangeObjSizeStrip : MonoBehaviour
     [SerializeField] private Vector2 checkForObjBoxSize;
     [SerializeField] private LayerMask objLayer;
 
-    private GameObject currentObj = null; 
+    public GameObject currentObj = null;
 
     private void Update()
     {
@@ -23,6 +25,20 @@ public class ChangeObjSizeStrip : MonoBehaviour
 
             if (currentObj == null)
             {
+                if (!invert && 
+                    detectedObj.transform.parent.localScale == 
+                    detectedObj.transform.GetComponentInParent<ObjectScaler>().GetScaledSize())
+                {
+                    return; 
+                }
+
+                if (invert && 
+                    detectedObj.transform.parent.localScale == 
+                    detectedObj.transform.GetComponentInParent<ObjectScaler>().GetBaseSize())
+                {
+                    return; 
+                }
+
                 currentObj = detectedObj;
             }
         }
@@ -33,6 +49,19 @@ public class ChangeObjSizeStrip : MonoBehaviour
 
             if (currentObj == null)
             {
+                if (invert &&
+                    detectedObj.transform.parent.localScale ==
+                    detectedObj.transform.GetComponentInParent<ObjectScaler>().GetScaledSize())
+                {
+                    return;
+                }
+
+                if (!invert &&
+                    detectedObj.transform.parent.localScale ==
+                    detectedObj.transform.GetComponentInParent<ObjectScaler>().GetBaseSize())
+                {
+                    return;
+                }
                 currentObj = detectedObj;
             }
         }
@@ -45,35 +74,9 @@ public class ChangeObjSizeStrip : MonoBehaviour
                 return;
             }
 
+
             ObjectScaler objScaler = currentObj.GetComponentInParent<ObjectScaler>();
-
             Vector3 objScaledSize = objScaler.GetScaledSize();
-
-            if (currentObj.transform.position.x < startPos.x)
-            {
-                if (invert)
-                {
-                    objScaler.SetToSize(objScaledSize);
-                    return;
-                }
-
-                objScaler.SetToBaseSize();
-                currentObj = null; 
-                return;
-            }
-
-            if (currentObj.transform.position.x > endPos.x)
-            {
-                if (invert)
-                {
-                    objScaler.SetToBaseSize();
-                    return;
-                }
-
-                objScaler.SetToSize(objScaledSize);
-                currentObj = null;
-                return; 
-            }
 
             Vector3 difference = endPos - startPos;
             Vector3 objDifference = currentObj.transform.position - startPos;
@@ -89,7 +92,44 @@ public class ChangeObjSizeStrip : MonoBehaviour
             Vector3 newObjSize = Vector3.Lerp(objScaler.GetBaseSize(), objScaledSize, t);
 
             objScaler.SetToSize(newObjSize);
+
+            CurrentObjStripStatus objStripStat = CheckObjInStrip();
+            switch (objStripStat)
+            {
+                case CurrentObjStripStatus.none:
+                    Debug.LogWarning("no obj strip status");
+                    break;
+                case CurrentObjStripStatus.inStrip:
+                    break;
+                case CurrentObjStripStatus.pastStart:
+                    objScaler.SetToBaseSize();
+                    currentObj = null;
+                    break;
+                case CurrentObjStripStatus.pastEnd:
+                    objScaler.SetToScaledSize();
+                    currentObj = null;
+                    break;
+            }
         }
+    }
+
+    private CurrentObjStripStatus CheckObjInStrip()
+    {
+        float objXPos = currentObj.transform.position.x;
+
+        if (objXPos > endPos.x)
+        {
+            return !invert ? CurrentObjStripStatus.pastEnd :
+                             CurrentObjStripStatus.pastStart;
+        }
+
+        if (objXPos < startPos.x)
+        {
+            return !invert ? CurrentObjStripStatus.pastStart:
+                             CurrentObjStripStatus.pastEnd;
+        }
+
+        return CurrentObjStripStatus.inStrip;
     }
 
     private void OnDrawGizmos()

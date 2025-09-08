@@ -6,11 +6,14 @@ public class Door : MonoBehaviour
 {
     [SerializeField] private int id; 
 
-    public void Open(int keyId)
+    public bool Open(int keyId)
     {
         if(keyId == id)
         {
             Destroy(gameObject);
+            return true;
         }
+
+        return false;
     }
 }

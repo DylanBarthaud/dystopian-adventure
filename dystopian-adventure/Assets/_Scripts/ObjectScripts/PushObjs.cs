@@ -20,7 +20,8 @@ public class PushObjs : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.Q) &&
+            gameObject.GetComponent<Item_Holder>().getItem() == null)
         {
             if(playerState == PlayerState.None ||
                 playerState == PlayerState.Pushing)
