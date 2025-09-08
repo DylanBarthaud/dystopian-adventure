@@ -87,15 +87,6 @@ public class Movement : MonoBehaviour
         this.playerState = playerState;
     }
 
-    #region Getters
-
-    public bool GetIsFacingRight()
-    {
-        return isFacingRight;
-    }
-
-    #endregion
-
     // Player Gizmos for designers 
     private void OnDrawGizmos()
     {

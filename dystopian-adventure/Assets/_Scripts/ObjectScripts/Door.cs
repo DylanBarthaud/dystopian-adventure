@@ -2,13 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Door : MonoBehaviour
+public class Door : MonoBehaviour, Interactable
 {
     [SerializeField] private int id; 
 
-    public void Open(int keyId)
+    public void Interact(Interactor interactor)
     {
-        if(keyId == id)
+        var item = (Item_Key)interactor.gameObject.GetComponent<Item_Holder>().getItem(); 
+
+        if (item != null
+            && item.GetId() == id) 
         {
             Destroy(gameObject);
         }
