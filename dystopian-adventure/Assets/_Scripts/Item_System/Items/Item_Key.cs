@@ -56,13 +56,17 @@ public class Item_Key : Item
 
             Movement playerMovementScript = GameManager.Instance.GetPlayer().gameObject.GetComponent<Movement>();
 
+            Transform gfxTransform = transform.GetChild(0).GetChild(0);
+
             if (!playerMovementScript.GetIsFacingRight())
             {
-                newParentPos = new Vector3(playerCollider.transform.position.x - ((playerSize.x / 2f) + (boxSize.x / 2f) + 0.01f), playerCollider.transform.position.y, parentPos.z);
+                gfxTransform.rotation = Quaternion.Euler(-20, 250, -7.5f);
+                newParentPos = new Vector3(playerCollider.transform.position.x - ((playerSize.x / 2f) + (boxSize.x / 2f) + 0.01f), playerCollider.transform.position.y + 0.1f, parentPos.z);
             }
             else
             {
-                newParentPos = new Vector3(playerCollider.transform.position.x + ((playerSize.x / 2f) + (boxSize.x / 2f) + 0.01f), playerCollider.transform.position.y, parentPos.z);
+                gfxTransform.rotation = Quaternion.Euler(-20, 70, -7.5f);
+                newParentPos = new Vector3(playerCollider.transform.position.x + ((playerSize.x / 2f) + (boxSize.x / 2f) + 0.01f), playerCollider.transform.position.y + 0.1f, parentPos.z);
             }
 
             transform.parent.position = newParentPos;

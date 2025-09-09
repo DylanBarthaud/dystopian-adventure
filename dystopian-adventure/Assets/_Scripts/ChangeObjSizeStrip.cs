@@ -137,7 +137,5 @@ public class ChangeObjSizeStrip : MonoBehaviour
         Gizmos.color = Color.green;
         Gizmos.DrawWireCube(startPos, checkForObjBoxSize);
         Gizmos.DrawWireCube(endPos, checkForObjBoxSize);
-
-        Gizmos.color = Color.red;
     }
 }
